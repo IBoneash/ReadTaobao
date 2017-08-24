@@ -28,6 +28,8 @@ node = soup.find_all('script')[7].string
 e = re.compile(r'"allNids":\[(.*?)]')
 f = re.compile(r'"(\d+)"')
 g = re.compile(r'href="//rate.taobao.com/(.*?)"')
+h = re.compile(r'shopId=(\d+);')
+
 # print pre_content.text
 product_id = re.findall(e, node)[0]
 product_list = re.findall(f, product_id)
@@ -40,4 +42,9 @@ for i in product_list:
         rate_url = 'https://rate.taobao.com/%s' % rate_url
         print rate_url
     else:
-        print product_url
+        shop_id = re.findall(h, content.text)[0]
+        shop_url = 'https://shop%s.taobao.com' % shop_id
+        shop_content = requests.get(shop_url)
+        rate_url = re.findall(g, shop_content.text)[0]
+        rate_url = 'https://rate.taobao.com/%s' % rate_url
+        print rate_url
